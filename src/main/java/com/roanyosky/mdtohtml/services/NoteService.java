@@ -7,8 +7,10 @@ import com.roanyosky.mdtohtml.entities.Note;
 import com.roanyosky.mdtohtml.mappers.NoteMapper;
 import com.roanyosky.mdtohtml.repositories.NoteRepository;
 import lombok.AllArgsConstructor;
+import org.commonmark.node.Node;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Service;
-
+import org.commonmark.parser.Parser;
 import java.util.List;
 
 @Service
@@ -29,5 +31,14 @@ public class NoteService {
         Note noteToUpdate = noteRepository.findByFileName(fileName);
         noteMapper.updateDto(noteUpdateDto, noteToUpdate);
         return noteMapper.toDto(noteRepository.save(noteToUpdate));
+    }
+
+    public String convertFromMarkdownToHtml(String identifier)
+    {
+        Note desiredNote = noteRepository.findByFileName(identifier);
+        Parser parser = Parser.builder().build();
+		Node document = parser.parse(desiredNote.getContent());
+		HtmlRenderer renderer = HtmlRenderer.builder().build();
+        return renderer.render(document);
     }
 }
