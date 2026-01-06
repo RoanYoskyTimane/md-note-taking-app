@@ -5,6 +5,7 @@ import com.roanyosky.mdtohtml.dtos.NoteDto;
 import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
 import com.roanyosky.mdtohtml.services.NoteService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,4 +32,8 @@ public class NoteController {
         return ResponseEntity.ok(noteWithUpdatedContent);
     }
 
+    @GetMapping(value = "/{fileName}/render", produces = MediaType.TEXT_HTML_VALUE)
+    public String renderNote(@PathVariable String fileName) {
+        return noteService.convertFromMarkdownToHtml(fileName);
+    }
 }
