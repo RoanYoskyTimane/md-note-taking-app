@@ -5,6 +5,7 @@ import com.roanyosky.mdtohtml.dtos.NoteDto;
 import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
 import com.roanyosky.mdtohtml.services.NoteService;
 import lombok.AllArgsConstructor;
+import org.springframework.expression.spel.ast.BooleanLiteral;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/api/v1/notes")
 public class NoteController {
     private NoteService noteService;
+
+    @GetMapping
+    public Iterable<NoteDto> getAllNotes()
+    {
+        return noteService.getAllNotes();
+    }
 
     @PostMapping
     public ResponseEntity<?> addNote(@RequestBody NoteCreateDto noteCreateDto, UriComponentsBuilder uriComponentsBuilder)
