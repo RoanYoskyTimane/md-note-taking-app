@@ -27,6 +27,10 @@ public class NoteService {
     public NoteDto createNote(NoteCreateDto noteCreateDto)
     {
         Note newNote = noteMapper.toEntity(noteCreateDto);
+        if (!newNote.getFileName().endsWith(".md"))
+        {
+            newNote.setFileName(newNote.getFileName()+".md");
+        }
         return noteMapper.toDto(noteRepository.save(newNote));
     }
 
@@ -45,4 +49,6 @@ public class NoteService {
 		HtmlRenderer renderer = HtmlRenderer.builder().build();
         return renderer.render(document);
     }
+
+
 }
