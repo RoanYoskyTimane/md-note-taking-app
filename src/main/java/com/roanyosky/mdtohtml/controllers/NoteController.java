@@ -1,6 +1,8 @@
 package com.roanyosky.mdtohtml.controllers;
 
 import com.roanyosky.mdtohtml.dtos.NoteCreateDto;
+import com.roanyosky.mdtohtml.dtos.NoteDto;
+import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
 import com.roanyosky.mdtohtml.services.NoteService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,13 @@ public class NoteController {
         var createdNote = noteService.createNote(noteCreateDto);
         var builder = uriComponentsBuilder.path("api/v1/notes").build(createdNote.getId());
         return ResponseEntity.created(builder).body(createdNote);
+    }
+
+    @PutMapping("/{fileName}")
+    public ResponseEntity<NoteDto> updateNoteConent(@PathVariable String fileName, @RequestBody NoteUpdateDto noteUpdateDto)
+    {
+        var noteWithUpdatedContent = noteService.updateNote(noteUpdateDto, fileName);
+        return ResponseEntity.ok(noteWithUpdatedContent);
     }
 
 }
