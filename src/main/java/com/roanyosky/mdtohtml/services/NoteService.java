@@ -12,6 +12,7 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Service;
 import org.commonmark.parser.Parser;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +20,9 @@ public class NoteService {
     private final NoteMapper noteMapper;
     private final NoteRepository noteRepository;
 
+    public List<NoteDto> getAllNotes(){
+        return noteRepository.findAll().stream().map(noteMapper::toDto).collect(Collectors.toList());
+    }
 
     public NoteDto createNote(NoteCreateDto noteCreateDto)
     {
