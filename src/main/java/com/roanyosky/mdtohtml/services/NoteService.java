@@ -50,5 +50,11 @@ public class NoteService {
         return renderer.render(document);
     }
 
-
+    public byte[] getNoteContent(String fileName) {
+        Note note = noteRepository.findByFileName(fileName);
+        if (note == null) {
+            throw new RuntimeException("Note not found"); // Or a custom exception
+        }
+        return note.getContent().getBytes();
+    }
 }
