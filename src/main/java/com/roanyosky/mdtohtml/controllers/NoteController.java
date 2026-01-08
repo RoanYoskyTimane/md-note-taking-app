@@ -6,6 +6,7 @@ import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
 import com.roanyosky.mdtohtml.services.NoteService;
 import lombok.AllArgsConstructor;
 import org.springframework.expression.spel.ast.BooleanLiteral;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +43,15 @@ public class NoteController {
     @GetMapping(value = "/{fileName}/render", produces = MediaType.TEXT_HTML_VALUE)
     public String renderNote(@PathVariable String fileName) {
         return noteService.convertFromMarkdownToHtml(fileName);
+    }
+
+    @GetMapping("/{fileName}/download")
+    public ResponseEntity<byte[]> downloadNote(@PathVariable String fileName) {
+        byte[] content = noteService.getNoteContent(fileName);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.TEXT_MARKDOWN)
+                .body(content);
     }
 }
