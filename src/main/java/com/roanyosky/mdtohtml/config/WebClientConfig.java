@@ -1,0 +1,17 @@
+package com.roanyosky.mdtohtml.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Configuration
+public class WebClientConfig {
+    @Value("${language-tool.api-url}")
+    String apiUrl;
+
+    public WebClient languageToolWebClient(){
+        return WebClient.builder()
+                .baseUrl(apiUrl)
+                .build();
+    }
+}
