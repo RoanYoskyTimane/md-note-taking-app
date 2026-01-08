@@ -9,6 +9,8 @@ import com.roanyosky.mdtohtml.repositories.NoteRepository;
 import lombok.AllArgsConstructor;
 import org.commonmark.node.Node;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.commonmark.renderer.markdown.MarkdownRenderer;
+import org.commonmark.renderer.text.TextContentRenderer;
 import org.springframework.stereotype.Service;
 import org.commonmark.parser.Parser;
 import java.util.List;
@@ -50,7 +52,22 @@ public class NoteService {
         return renderer.render(document);
     }
 
-    public byte[] getNoteContent(String fileName) {
+    public String getContentAsString(String fileName){
+        Note note = noteRepository.findByFileName(fileName);
+        if (note == null) {
+            throw new RuntimeException("Note not found");
+        }
+
+        Parser parser = Parser.builder().build();
+        Node document = parser.parse(note.getContent());
+
+        TextContentRenderer renderer = TextContentRenderer.builder().build();
+
+        return renderer.render(document);
+    }
+
+
+    public byte[] getNoteContentAsBytes(String fileName) {
         Note note = noteRepository.findByFileName(fileName);
         if (note == null) {
             throw new RuntimeException("Note not found"); // Or a custom exception
