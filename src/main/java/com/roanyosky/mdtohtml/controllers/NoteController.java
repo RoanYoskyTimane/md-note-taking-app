@@ -1,11 +1,13 @@
 package com.roanyosky.mdtohtml.controllers;
 
+import com.roanyosky.mdtohtml.dtos.GrammarCheckDto;
 import com.roanyosky.mdtohtml.dtos.NoteCreateDto;
 import com.roanyosky.mdtohtml.dtos.NoteDto;
 import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
+import com.roanyosky.mdtohtml.services.GrammarService;
 import com.roanyosky.mdtohtml.services.NoteService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.expression.spel.ast.BooleanLiteral;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("/api/v1/notes")
 public class NoteController {
     private NoteService noteService;
+    private GrammarService grammarService;
 
     @GetMapping
     public Iterable<NoteDto> getAllNotes()
@@ -47,11 +50,20 @@ public class NoteController {
 
     @GetMapping("/{fileName}/download")
     public ResponseEntity<byte[]> downloadNote(@PathVariable String fileName) {
-        byte[] content = noteService.getNoteContent(fileName);
+        byte[] content = noteService.getNoteContentAsBytes(fileName);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.TEXT_MARKDOWN)
                 .body(content);
+    }
+
+    @GetMapping("/{fileName}/grammar-check")
+    public ResponseEntity<GrammarCheckDto> grammaCheckContent(@PathVariable String fileName, HttpServletRequest request)
+    {
+        String content = noteService.getContentAsString(fileName);
+        String clientIp = request.getRemoteAddr();
+        var checkingGramma = grammarService.checkGrammar(content, clientIp);
+        return ResponseEntity.ok(checkingGramma);
     }
 }
