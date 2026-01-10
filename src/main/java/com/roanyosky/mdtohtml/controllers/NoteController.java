@@ -1,9 +1,6 @@
 package com.roanyosky.mdtohtml.controllers;
 
-import com.roanyosky.mdtohtml.dtos.GrammarCheckDto;
-import com.roanyosky.mdtohtml.dtos.NoteCreateDto;
-import com.roanyosky.mdtohtml.dtos.NoteDto;
-import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
+import com.roanyosky.mdtohtml.dtos.*;
 import com.roanyosky.mdtohtml.services.GrammarService;
 import com.roanyosky.mdtohtml.services.NoteService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +56,7 @@ public class NoteController {
     }
 
     @GetMapping("/{fileName}/grammar-check")
-    public ResponseEntity<GrammarCheckDto> grammaCheckContent(@PathVariable String fileName, HttpServletRequest request)
+    public ResponseEntity<LanguageToolResponseDto> grammaCheckContent(@PathVariable String fileName, HttpServletRequest request)
     {
         String content = noteService.getContentAsString(fileName);
         String clientIp = request.getRemoteAddr();
