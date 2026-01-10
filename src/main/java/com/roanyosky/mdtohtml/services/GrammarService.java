@@ -1,11 +1,12 @@
 package com.roanyosky.mdtohtml.services;
 
-import com.roanyosky.mdtohtml.dtos.GrammarCheckDto;
+import com.roanyosky.mdtohtml.dtos.LanguageToolResponseDto;
 import io.github.bucket4j.Bucket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,8 +21,7 @@ public class GrammarService {
 
     private final Map<String, Bucket> userBuckets = new ConcurrentHashMap<>();
 
-    public GrammarCheckDto checkGrammar(String content, String userId) {
-        // Use the modern v8+ API to build/get the bucket
+    public LanguageToolResponseDto checkGrammar(String content, String userId) {
         Bucket bucket = userBuckets.computeIfAbsent(userId, key ->
                 Bucket.builder()
                         .addLimit(limit -> limit.capacity(20).refillIntervally(20, Duration.ofMinutes(1)))
@@ -35,9 +35,10 @@ public class GrammarService {
         return webClient.post()
                 .uri("/check")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .bodyValue("text=" + content + "&language=en-US")
+                .body(BodyInserters.fromFormData("text", content)
+                        .with("language", "auto"))
                 .retrieve()
-                .bodyToMono(GrammarCheckDto.class)
+                .bodyToMono(LanguageToolResponseDto.class)
                 .block();
     }
 }
