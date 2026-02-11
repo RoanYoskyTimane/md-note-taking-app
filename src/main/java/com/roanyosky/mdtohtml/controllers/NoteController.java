@@ -4,6 +4,7 @@ import com.roanyosky.mdtohtml.dtos.GrammarCheckDto;
 import com.roanyosky.mdtohtml.dtos.NoteCreateDto;
 import com.roanyosky.mdtohtml.dtos.NoteDto;
 import com.roanyosky.mdtohtml.dtos.NoteUpdateDto;
+import com.roanyosky.mdtohtml.entities.Note;
 import com.roanyosky.mdtohtml.services.GrammarService;
 import com.roanyosky.mdtohtml.services.NoteService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,15 +30,15 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addNote(@RequestBody NoteCreateDto noteCreateDto, UriComponentsBuilder uriComponentsBuilder)
+    public ResponseEntity<NoteDto> addNote(@RequestBody NoteCreateDto noteCreateDto, UriComponentsBuilder uriComponentsBuilder)
     {
         var createdNote = noteService.createNote(noteCreateDto);
         var builder = uriComponentsBuilder.path("api/v1/notes").build(createdNote.getId());
         return ResponseEntity.created(builder).body(createdNote);
     }
 
-    @PutMapping("/{fileName}")
-    public ResponseEntity<NoteDto> updateNoteConent(@PathVariable String fileName, @RequestBody NoteUpdateDto noteUpdateDto)
+    @PatchMapping("/{fileName}")
+    public ResponseEntity<NoteDto> updateNoteContent(@PathVariable String fileName, @RequestBody NoteUpdateDto noteUpdateDto)
     {
         var noteWithUpdatedContent = noteService.updateNote(noteUpdateDto, fileName);
         return ResponseEntity.ok(noteWithUpdatedContent);
